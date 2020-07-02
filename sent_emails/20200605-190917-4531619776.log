@@ -1,0 +1,25 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Password reset on 127.0.0.1:8000
+From: webmaster@localhost
+To: ladymary13@mail.ru
+Date: Fri, 05 Jun 2020 19:09:17 -0000
+Message-ID: <159138415746.48246.5306975823571234009@MacBook-Pro-4.local>
+
+
+You're receiving this email because you requested a password reset for your user account at 127.0.0.1:8000.
+
+Please go to the following page and choose a new password:
+
+http://127.0.0.1:8000/auth/reset/NA/5h3-9af0e13e56f7c93cd13e/
+
+Your username, in case you've forgotten: mkuz
+
+Thanks for using our site!
+
+The 127.0.0.1:8000 team
+
+
+
+-------------------------------------------------------------------------------
