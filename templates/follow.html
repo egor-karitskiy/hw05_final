@@ -4,7 +4,8 @@
 
 {% block content %}
     <div class="container">
-           <h1> Подписки </h1>
+    {% include "include/menu.html" with index=False %}
+           <h1> Избранные авторы </h1>
 
                 {% for post in page %}
                     {% include "include/post_item.html" with post=post %}
@@ -13,6 +14,6 @@
     </div>
 
         {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator%}
+            {% include "include/paginator.html" with items=page paginator=paginator%}
         {% endif %}
 {% endblock %}

@@ -4,16 +4,15 @@ from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from django.test import Client
 
-from .models import Post, Group
+from .models import Post, Group, Follow, Comment
 from django.urls import reverse
 
 User = get_user_model()
 
 
 @override_settings(CACHES={'default':
-    {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
-class Sprint6Tests(TestCase):
+    {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
+class Sprint5And6Tests(TestCase):
     def setUp(self):
         self.not_logged_in_client = Client()
         self.client = Client()
@@ -199,3 +198,79 @@ class Sprint6TestsCachedTests(TestCase):
         response3 = self.client.get(reverse('index'))
         self.assertNotEqual(response1.content,
                             response3.content)
+
+
+@override_settings(CACHES={'default':
+    {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
+class Sprint6FinalTaskTest(TestCase):
+    def setUp(self):
+        self.not_logged_in_client = Client()
+        self.nifnif_client = Client()
+        self.nafnaf_client = Client()
+        self.gray_wolf_client = Client()
+        self.nifnif_user = User.objects.create_user(username='nifnif')
+        self.nafnaf_user = User.objects.create_user(username='nafnaf')
+        self.gray_wolf_user = User.objects.create_user(username='graywolf')
+        self.nifnif_client.force_login(self.nifnif_user)
+        self.nafnaf_client.force_login(self.nafnaf_user)
+        self.gray_wolf_client.force_login(self.gray_wolf_user)
+
+    def test_authorized_user_can_follow_and_unfollow(self):
+        follow_url = reverse('profile_follow',
+                             kwargs={'username': self.gray_wolf_user.username})
+        self.nifnif_client.get(follow_url)
+        self.assertTrue(Follow.objects.filter(user=self.nifnif_user,
+                                              author=self.gray_wolf_user))
+        unfollow_url = reverse('profile_unfollow',
+                               kwargs={'username':
+                                           self.gray_wolf_user.username})
+        self.nifnif_client.get(unfollow_url)
+        self.assertFalse(Follow.objects.filter(user=self.nifnif_user,
+                                               author=self.gray_wolf_user))
+
+    def test_new_post_appears_only_on_followers_feed(self):
+        Follow.objects.create(user=self.nifnif_user,
+                              author=self.gray_wolf_user)
+        new_post = Post.objects.create(author=self.gray_wolf_user,
+                                       text='I''m going to destroy your house!')
+        feed_url = reverse('follow_index')
+        follower_response = self.nifnif_client.get(feed_url)
+        non_follower_response = self.nafnaf_client.get(feed_url)
+
+        self.assertContains(follower_response, new_post.text)
+        self.assertNotContains(non_follower_response, new_post.text)
+
+    def test_only_authenticated_user_can_comment(self):
+        new_post = Post.objects.create(author=self.gray_wolf_user,
+                                       text='I''m going to destroy your house!')
+        comment_text = 'Fuck  off! Stupid Gray Wolf!'
+        comment_url = reverse('add_comment', kwargs={
+            'username': self.gray_wolf_user.username,
+            'post_id': new_post.id})
+        non_logged_in_response_post = self.not_logged_in_client.post(
+                                comment_url,
+                                data={'text': comment_text,
+                                      'post': new_post,
+                                      'author': self.nafnaf_user})
+        non_logged_in_response = self.not_logged_in_client.get(comment_url)
+        expected_url = reverse('login') + "?next=" + reverse(
+            'add_comment', kwargs={
+                'username': self.gray_wolf_user.username,
+                'post_id': new_post.id})
+        self.assertRedirects(non_logged_in_response, expected_url)
+        self.assertRedirects(non_logged_in_response_post, expected_url)
+        self.assertEqual(Comment.objects.count(), 0)
+
+        post_url = reverse('post', kwargs={
+            'username': self.gray_wolf_user.username,
+            'post_id': new_post.id})
+        logged_in_response_get = self.nafnaf_client.get(comment_url)
+        self.assertRedirects(logged_in_response_get, post_url)
+
+        self.nafnaf_client.post(comment_url,
+                                data={'text': comment_text,
+                                      'post': new_post,
+                                      'author': self.nafnaf_user})
+        logged_in_response_get_post = self.nafnaf_client.get(post_url)
+        self.assertContains(logged_in_response_get_post, comment_text)
+        self.assertEqual(Comment.objects.count(), 1)
