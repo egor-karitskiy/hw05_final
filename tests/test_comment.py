@@ -87,7 +87,6 @@ class TestComment:
         else:
             url = f'/{post.author.username}/{post.id}/comment'
 
-            print('aaaaaaaaaa', url)
         assert response.status_code != 404, \
             'Страница `/<username>/<post_id>/comment/` не найдена, проверьте этот адрес в *urls.py*'
 
