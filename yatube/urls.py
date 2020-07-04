@@ -11,20 +11,38 @@ handler500 = 'posts.views.server_error' # noqa
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls),
-    path('', include('posts.urls')),
-    path('about/', include('django.contrib.flatpages.urls')),
-    path('auth/', include('users.urls')),
-    path('auth/', include("django.contrib.auth.urls"), name='auth'),
+    path('admin/',
+         admin.site.urls),
+    path('',
+         include('posts.urls')
+         ),
+    path('about/',
+         include('django.contrib.flatpages.urls')
+         ),
+    path('auth/',
+         include('users.urls')
+         ),
+    path('auth/',
+         include("django.contrib.auth.urls"),
+         name='auth'
+         ),
 
 
 ]
 
 urlpatterns += [
-    path('about-us/', fpv.flatpage, {'url': '/about-us/'}, name='about'),
-    path('terms/', fpv.flatpage, {'url': '/terms/'}, name='terms'),
+    path('about-us/',
+         fpv.flatpage,
+         {'url': '/about-us/'},
+         name='about'),
+    path('terms/',
+         fpv.flatpage,
+         {'url': '/terms/'},
+         name='terms'),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)

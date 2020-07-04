@@ -18,19 +18,32 @@ class Group(models.Model):
 
 
 class Post(models.Model):
-    text = models.TextField(verbose_name='Текст')
-    pub_date = models.DateTimeField('date published', auto_now_add=True)
-    author = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               related_name='posts')
-    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    text = models.TextField(
+        verbose_name='Текст'
+    )
+    pub_date = models.DateTimeField(
+        'date published',
+        auto_now_add=True,
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts',
+        verbose_name='Автор'
+    )
+    image = models.ImageField(
+        upload_to='posts/',
+        blank=True,
+        null=True,
+        verbose_name='Картинка'
+    )
     group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='posts',
-        verbose_name='Группа'
+        verbose_name='Группа',
     )
 
     class Meta:
@@ -47,17 +60,21 @@ class Comment(models.Model):
                              on_delete=models.SET_NULL,
                              blank=True,
                              null=True,
-                             related_name='comments'
+                             related_name='comments',
+                             verbose_name='Пост'
                              )
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name='comments')
+                               related_name='comments',
+                               verbose_name='Автор')
     text = models.TextField(verbose_name='Текст')
     created = models.DateTimeField('date published', auto_now_add=True)
 
 
 class Follow(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
                              related_name='follower')
-    author = models.ForeignKey(User, on_delete=models.CASCADE,
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
                                related_name='following')

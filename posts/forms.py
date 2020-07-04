@@ -7,11 +7,21 @@ class PostForm(ModelForm):
 
     class Meta:
         model = Post
-        fields = ['group', 'text', 'image']
+        fields = [
+            'group',
+            'text',
+            'image'
+        ]
         help_texts = {
+            'group': 'Выберите группу для публикации :)',
             'text': 'Пишите ваши грандиозные мысли здесь!',
-            'group': 'Выберите группу для публикации :)'
-            }
+            'image': 'Загрузите вашу крутую картиночку!'
+        }
+        labels = {
+            'group': 'Группа',
+            'text': 'Текст',
+            'image': 'Картинка'
+        }
 
 
 class CommentForm(ModelForm):
@@ -19,5 +29,5 @@ class CommentForm(ModelForm):
         model = Comment
         fields = ('text',)
         widgets = {
-            'text': Textarea(attrs={'cols': 70, 'rows':6}),
+            'text': Textarea(attrs={'cols': 70, 'rows': 6}),
         }

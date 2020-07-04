@@ -40,8 +40,11 @@ def group_posts(request, slug):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'group.html',
-                  {'page': page, 'paginator': paginator,
-                   'group': slugged_group}
+                  {
+                      'page': page,
+                      'paginator': paginator,
+                      'group': slugged_group
+                  }
                   )
 
 
@@ -87,21 +90,35 @@ def post_view(request, username, post_id):
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, pk=post_id, author__username=username)
     if request.user != post.author:
-        return redirect(reverse("post", kwargs=
-        {
-            'username': username,
-            'post_id': post_id
-        }
-                                ))
+        return redirect(reverse("post",
+                                kwargs=
+                                {
+                                    'username': username,
+                                    'post_id': post_id
+                                }
+                                )
+                        )
     form = PostForm(request.POST or None,
                     files=request.FILES or None,
                     instance=post)
     if form.is_valid():
         form.save()
-        return redirect(reverse('post', kwargs=
-        {'username': username, 'post_id': post_id}))
-    return render(request, 'new_post.html',
-                  {'form': form, 'post': post, 'is_edit': True})
+        return redirect(reverse('post',
+                                kwargs=
+                                {
+                                    'username': username,
+                                    'post_id': post_id
+                                }
+                                )
+                        )
+    return render(request,
+                  'new_post.html',
+                  {
+                      'form': form,
+                      'post': post,
+                      'is_edit': True
+                  }
+                  )
 
 
 def page_not_found(request, exception):
@@ -127,11 +144,23 @@ def add_comment(request, username, post_id):
             comment.author = request.user
             comment.post = post
             form.save()
-            return redirect(reverse("post", kwargs={
-                'username': username, 'post_id': post_id}))
+            return redirect(reverse("post",
+                                    kwargs=
+                                    {
+                                        'username': username,
+                                        'post_id': post_id
+                                    }
+                                    )
+                            )
     else:
-        return redirect(reverse("post", kwargs={
-            'username': username, 'post_id': post_id}))
+        return redirect(reverse("post",
+                                kwargs=
+                                {
+                                    'username': username,
+                                    'post_id': post_id
+                                }
+                                )
+                        )
 
 
 @login_required
@@ -146,15 +175,19 @@ def follow_index(request):
     return render(
         request,
         'follow.html',
-        {'page': page, 'paginator': paginator}
+        {
+            'page': page,
+            'paginator': paginator
+        }
     )
 
 
 @login_required
 def profile_follow(request, username):
     user = get_object_or_404(User, username=username)
-    if not Follow.objects.filter(user=request.user,
-                                 author=user) and request.user != user:
+    if request.user != user and not Follow.objects.filter(
+            user=request.user,
+            author=user):
         Follow.objects.create(user=request.user, author=user)
         following = True
     else:
