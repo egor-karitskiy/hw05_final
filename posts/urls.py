@@ -35,4 +35,16 @@ urlpatterns = [
     path('<str:username>/<int:post_id>/comment',
          views.add_comment,
          name="add_comment"),
+    path('api/v1/posts/',
+         views.api_posts,
+         name='api_posts'),
+    path('api/v1/posts/<int:post_id>/',
+         views.api_posts_detail,
+         name='api_posts_detail'),
+    path('api/v2/posts/',
+         views.APIPost.as_view(),
+         name='class_api_posts'),
+    path('api/v2/posts/<int:id>/',
+         views.APIPostDetail.as_view(),
+         name='class_api_posts_detail')
                 ]

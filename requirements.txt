@@ -1,17 +1,17 @@
 attrs             # via pytest
 certifi        # via requests
 chardet==3.0.4            # via requests
-django
+django~=3.0.8
 idna                 # via requests
 importlib-metadata  # via pluggy, pytest
 more-itertools     # via pytest
 packaging           # via pytest
-pillow
+pillow~=7.2.0
 pluggy==0.13.1            # via pytest
 py                # via pytest
 pyparsing          # via packaging
 pytest-django
-pytest             # via pytest-django
+pytest~=5.4.3
 pytz              # via django
 requests
 six               # via packaging
@@ -20,3 +20,12 @@ sqlparse         # via django
 urllib3           # via requests
 wcwidth            # via pytest
 zipp               # via importlib-metadata
+
+django-debug-toolbar~=2.2
+djangorestframework~=3.11.0
+
+djangorestframework-simplejwt==4.3.0
+gunicorn==20.0.4
+psycopg2-binary==2.8.5
+PyJWT==1.7.1
+
